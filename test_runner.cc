@@ -40,11 +40,8 @@ void TestRunner::Run(PrometheusReporter *reporter)
 
     auto run_end_time = absl::Now() + absl::GetFlag(FLAGS_run_duration);
 
-    long success_count = 0;
-    long call_count = 0;
     while (absl::Now() < run_end_time)
     {
-
         auto start = high_resolution_clock::now();
         bool success = false;
         switch (config_.operation())
@@ -64,16 +61,17 @@ void TestRunner::Run(PrometheusReporter *reporter)
         }
 
         auto stop = high_resolution_clock::now();
-        std::chrono::duration<double, std::milli> duration = stop - start;
+        std::chrono::duration<double, std::micro> duration = stop - start;
 
         if (success)
         {
-            success_count++;
+            metrics_tracker.ReportSuccess(duration.count());
+        } else {
+            metrics_tracker.ReportError(duration.count());
         }
-        call_count++;
     }
-    reporter->ReportSuccesses(success_count);
-    reporter->ReportCalls(call_count);
+    reporter->ReportSuccesses(metrics_tracker.successes());
+    reporter->ReportCalls(metrics_tracker.requests());
     reporter->RecordSuccessP50(metrics_tracker.Quantile(.5));
     reporter->RecordSuccessP90(metrics_tracker.Quantile(.9));
     return;

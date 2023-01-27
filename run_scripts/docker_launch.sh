@@ -33,7 +33,7 @@ fi
 export BUCKET="${BUCKET_PREFIX}-${REGION}-${SCENARIO}"
 echo "Running on bucket '$BUCKET'"
 
-./gcs_perf_prober --universe=$UNIVERSE --api=json --scenario=$SCENARIO --region=$REGION --operation=$OPERATION --object_name=100K --push_to_prometheus --run_duration=1m &
-./gcs_perf_prober --universe=$UNIVERSE --api=grpc --scenario=$SCENARIO --region=$REGION --operation=$OPERATION --object_name=100K --push_to_prometheus --run_duration=1m
+#./gcs_perf_prober --universe=$UNIVERSE --api=json --scenario=$SCENARIO --region=$REGION --operation=$OPERATION --object_name=100K --push_to_prometheus --run_duration=1m --write_length=$WRITE_LENGTH
+./gcs_perf_prober --universe=$UNIVERSE --api=grpc --scenario=$SCENARIO --region=$REGION --operation=$OPERATION --object_name=100K --push_to_prometheus --run_duration=1m --write_length=$WRITE_LENGTH
 
 # And start JSON as well.

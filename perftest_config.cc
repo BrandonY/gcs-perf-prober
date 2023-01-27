@@ -130,3 +130,11 @@ std::string PerftestConfig::universe_str() {
     }
     return nullptr;
 }
+
+std::string PerftestConfig::clientAPI_str() {
+    switch(clientAPI_) {
+        case GRPC_DIRECTPATH: return "gRPC";
+        case JSON: return "JSON";
+    }
+    return nullptr;
+}

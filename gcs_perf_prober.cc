@@ -26,9 +26,36 @@ namespace gc = ::google::cloud;
 namespace gcs = gc::storage;
 namespace gcs_experimental = gc::storage_experimental;
 
+#include <stdio.h>
+#include <execinfo.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+
+void handler(int sig) {
+  void *array[10];
+  size_t size;
+
+  // get void*'s for all entries on the stack
+  size = backtrace(array, 10);
+
+  // print out all the frames to stderr
+  fprintf(stderr, "Error: signal %d:\n", sig);
+  backtrace_symbols_fd(array, size, STDERR_FILENO);
+  exit(1);
+}
+
+
 int main(int argc, char **argv)
 {
     absl::ParseCommandLine(argc, argv);
+
+  signal(SIGSEGV, handler);   // install our handler
+
+     int *foo = (int*)-1; // make a bad pointer
+     printf("%d\n", *foo);       // causes segfault
+
 
     std::optional<PerftestConfig> config = PerftestConfig::LoadConfig();
     if (!config)
@@ -36,7 +63,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    PrometheusReporter prometheus_reporter(absl::GetFlag(FLAGS_prometheus_host), absl::GetFlag(FLAGS_prometheus_port), config->scenario(), config->universe_str(), GcsClient::GRPCVersion(), GcsClient::GCSClientVersion());
+    PrometheusReporter prometheus_reporter(absl::GetFlag(FLAGS_prometheus_host), absl::GetFlag(FLAGS_prometheus_port), config->scenario(), config->clientAPI_str(), config->region(), config->universe_str(), GcsClient::GRPCVersion(), GcsClient::GCSClientVersion());
 
     do
     {

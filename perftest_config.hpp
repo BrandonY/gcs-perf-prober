@@ -32,6 +32,7 @@ public:
     Universe universe() { return universe_; }
     std::string universe_str();
     ClientAPI clientAPI() { return clientAPI_; }
+    std::string clientAPI_str();
     Operation operation() { return operation_; }
     std::string bucket() { return bucket_; }
     std::string object() { return object_; }

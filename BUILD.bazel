@@ -67,10 +67,16 @@ cc_library(
   ]
 )
 
+cc_library(
+  name="segfault",
+  srcs=["libsegfault.c"],
+)
+
 cc_binary(
   name = "gcs_perf_prober",
   srcs = ["gcs_perf_prober.cc"],
   deps = [
+    ":segfault",
     ":metrics_tracker",
     "@google_cloud_cpp//:experimental-storage-grpc",
     ":prometheus_reporter",

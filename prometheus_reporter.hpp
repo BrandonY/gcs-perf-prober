@@ -13,7 +13,7 @@ class PrometheusReporter
 {
 public:
     PrometheusReporter(std::string host, std::string port,
-                       std::string scenario, std::string universe, std::string grpc_version, std::string gcs_client_version);
+                       std::string scenario, std::string api, std::string location, std::string universe, std::string grpc_version, std::string gcs_client_version);
 
     PrometheusReporter(const PrometheusReporter &) = delete;
     PrometheusReporter &operator=(const PrometheusReporter &) = delete;
