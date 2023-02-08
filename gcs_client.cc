@@ -31,7 +31,7 @@ GcsClient::GcsClient(google::cloud::storage::Client client, std::string bucket) 
 {
     random_write_buffer_len_ = 2097152;
     // Probably faster/better to read from /dev/urandom?
-    random_write_buffer_ = new char[random_write_buffer_len_];
+    random_write_buffer_ = std::make_unique<char[]>(random_write_buffer_len_);
     for (unsigned long i = 0; i < random_write_buffer_len_; i++)
     {
         random_write_buffer_[i] = (char)rand();
@@ -94,12 +94,13 @@ bool GcsClient::ResumablyWriteObject(std::string object, unsigned long bytes)
         std::cerr << "Error starting resumable uploads: " << stream.metadata().status() << "\n";
         return false;
     }
+    last_session_id_ = stream.resumable_session_id();
 
     unsigned long written = 0;
     while (written < bytes)
     {
         unsigned long to_write = std::min(random_write_buffer_len_, bytes - written);
-        stream.write(random_write_buffer_, to_write);
+        stream.write(random_write_buffer_.get(), to_write);
         written += to_write;
 
         if (stream.bad())

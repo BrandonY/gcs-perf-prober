@@ -40,6 +40,7 @@ void TestRunner::Run(PrometheusReporter *reporter)
 
     auto run_end_time = absl::Now() + absl::GetFlag(FLAGS_run_duration);
 
+    std::string object_name;
     while (absl::Now() < run_end_time)
     {
         auto start = high_resolution_clock::now();
@@ -53,7 +54,8 @@ void TestRunner::Run(PrometheusReporter *reporter)
             success = client->OneShotWriteObject(absl::StrCat(config_.object(), "_", rand()), config_.write_length());
             break;
         case RESUMABLE_WRITE:
-            success = client->ResumablyWriteObject(absl::StrCat(config_.object(), "_", rand()), config_.write_length());
+            object_name = absl::StrCat(config_.object(), "_", rand());
+            success = client->ResumablyWriteObject(object_name, config_.write_length());
             break;
         case QUERY_WRITE_STATUS:
             // TODO
@@ -62,6 +64,11 @@ void TestRunner::Run(PrometheusReporter *reporter)
 
         auto stop = high_resolution_clock::now();
         std::chrono::duration<double, std::micro> duration = stop - start;
+
+        if ( duration > std::chrono::seconds(30)) {
+            auto d_seconds = std::chrono::duration_cast<std::chrono::seconds>(duration);
+            std::cerr << "Write of object " << object_name << " needed " << d_seconds.count() << " seconds. Session ID: " << client->LastSessionId() << std::endl;
+        }
 
         if (success)
         {

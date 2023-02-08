@@ -25,15 +25,20 @@ public:
     static std::string GRPCVersion();
     static std::string GCSClientVersion();
 
+    // For logging/diagnostics
+    std::string LastSessionId() { return last_session_id_; }
+
 private:
     GcsClient(google::cloud::storage::Client client, std::string bucket);
 
     google::cloud::storage::Client client_;
     const std::string bucket_;
     unsigned long random_write_buffer_len_;
-    char *random_write_buffer_;
+    std::unique_ptr<char[]> random_write_buffer_;
 
     std::vector<char> io_buffer_;
+
+    std::string last_session_id_;
 };
 
 #endif // __GCS_CLIENT_HPP_

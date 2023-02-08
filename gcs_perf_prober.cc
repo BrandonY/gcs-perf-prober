@@ -50,13 +50,6 @@ void handler(int sig) {
 int main(int argc, char **argv)
 {
     absl::ParseCommandLine(argc, argv);
-
-  signal(SIGSEGV, handler);   // install our handler
-
-     int *foo = (int*)-1; // make a bad pointer
-     printf("%d\n", *foo);       // causes segfault
-
-
     std::optional<PerftestConfig> config = PerftestConfig::LoadConfig();
     if (!config)
     {
