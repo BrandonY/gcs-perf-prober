@@ -3,7 +3,7 @@
 # exit when any command fails
 set -e
 
-bazel build :gcs_perf_prober
+bazel build -c opt :gcs_perf_prober
 
 # bazel-bin is a symlink out of the directory, so Docker doesn't like it.
 rm -rf target

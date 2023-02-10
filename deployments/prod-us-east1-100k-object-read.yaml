@@ -29,6 +29,7 @@ spec:
       labels:
         app: "prod-us-east1-100k-object-read"
     spec:
+      hostNetwork: true
       containers:
       - name: "gcs-perf-prober"
         image: "us-central1-docker.pkg.dev/gcs-grpc-team-testing/my-repository/gcs-perf-prober:latest"

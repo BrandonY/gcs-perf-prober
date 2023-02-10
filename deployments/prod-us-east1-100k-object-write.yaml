@@ -11,6 +11,7 @@ data:
   SCENARIO: "100k-object-write"
   REGION: "us-east1"
   OPERATION: "ResumableWriteObject"
+  WRITE_LENGTH: "100000"
 ---
 apiVersion: "apps/v1"
 kind: "Deployment"
@@ -29,6 +30,7 @@ spec:
       labels:
         app: "prod-us-east1-100k-object-write"
     spec:
+      hostNetwork: true
       containers:
       - name: "gcs-perf-prober"
         image: "us-central1-docker.pkg.dev/gcs-grpc-team-testing/my-repository/gcs-perf-prober:latest"
@@ -53,4 +55,9 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: "OPERATION"
+              name: "prod-us-east1-100k-object-write-config-dvfx"
+        - name: "WRITE_LENGTH"
+          valueFrom:
+            configMapKeyRef:
+              key: "WRITE_LENGTH"
               name: "prod-us-east1-100k-object-write-config-dvfx"
